@@ -1,0 +1,29 @@
+services:
+    api:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - '3000:3000'
+        environment:
+            MONGODB_URI: ${MONGODB_URI}
+            MERCADO_PAGO_API: ${MERCADO_PAGO_API}
+            MERCADO_PAGO_CLIENT_SECRET: ${MERCADO_PAGO_CLIENT_SECRET}
+            MERCADO_PAGO_CLIENT_ID: ${MERCADO_PAGO_CLIENT_ID}
+            MERCADO_PAGO_QR_CODE_API: ${MERCADO_PAGO_QR_CODE_API}
+            MERCADO_PAGO_WEBHOOK: ${MERCADO_PAGO_WEBHOOK}
+        depends_on:
+            - mongo
+        volumes:
+            - ./src:/app/src
+
+    mongo:
+        image: mongo:latest
+        command:
+            - '--logpath'
+            - '/var/log/mongodb/mongod.log'
+        volumes:
+            - mongo_data:/data/db # Persistir os dados do MongoDB
+
+volumes:
+    mongo_data:

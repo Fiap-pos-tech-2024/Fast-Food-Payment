@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: fast-food-payment-service
+    labels:
+        app: fast-food-payment-service
+spec:
+    replicas: 2
+    selector:
+        matchLabels:
+            app: fast-food-payment-service
+    template:
+        metadata:
+            labels:
+                app: fast-food-payment-service
+        spec:
+            automountServiceAccountToken: false
+            containers:
+                - name: fast-food-payment-service
+                  image: maickway/fast-food-api:tagname # TO-DO ATUALIZAR A IMG
+                  ports:
+                      - containerPort: 3000
+                  resources:
+                      requests:
+                          memory: '128Mi'
+                          cpu: '250m'
+                          ephemeral-storage: '1Gi'
+                      limits:
+                          memory: '256Mi'
+                          cpu: '500m'
+                  env:
+                      - name: MONGODB_URI
+                        value: mongodb://mongo:27017/fast-food-payment
+                      - name: APP_ENV
+                        valueFrom:
+                            configMapKeyRef:
+                                name: fast-food-payment-config
+                                key: APP_ENV
+                      - name: LOG_LEVEL
+                        valueFrom:
+                            configMapKeyRef:
+                                name: fast-food-payment-config
+                                key: LOG_LEVEL
+                - name: mongo
+                  image: mongo:6.0.5
+                  ports:
+                      - containerPort: 27017
+                  resources:
+                      requests:
+                          memory: '128Mi'
+                          cpu: '250m'
+                          ephemeral-storage: '1Gi'
+                      limits:
+                          memory: '256Mi'
+                          cpu: '500m'
