@@ -36,19 +36,24 @@ export class HealthCheckController {
      *                   example: "development"
      *                 node:
      *                   type: string
-     *                   example: "v14.17.0"
+     *                   example: "v18.20.8"
      *                 timestamp:
      *                   type: string
      *                   format: date-time
      *                   example: "Fri, 03 Nov 2024 10:00:00 GMT"
      *                 name:
      *                   type: string
-     *                   example: "Fast Food"
+     *                   example: "fast-food-payment"
      *       '500':
      *         description: Erro interno do servidor
      */
     private healthCheck(req: Request, res: Response): void {
-        const result = this.healthUseCase.healthCheck()
-        res.status(200).json(result)
+        try {
+            const result = this.healthUseCase.healthCheck()
+            res.status(200).json(result)
+        } catch (error) {
+            console.error('Health check failed:', error)
+            res.status(500).json({ error: 'Health check failed' })
+        }
     }
 }

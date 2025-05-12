@@ -5,6 +5,9 @@ metadata:
 data:
     APP_ENV: 'production'
     LOG_LEVEL: 'info'
-    # PAYMENT_SERVICE_API: 'https://payment-service.example.com'
-    # MERCADO_PAGO_API_KEY: 'your-mercado-pago-api-key'
-    # ORDER_SERVICE_API: 'https://order-service.example.com'
+    ORDER_SERVICE_API: 'http://order-service:3001'
+    MERCADO_PAGO_API: 'https://api.mercadopago.com'
+    MERCADO_PAGO_CLIENT_ID: '1824214370596611'
+    MERCADO_PAGO_CLIENT_SECRET: 'IyaI124z9fuUZUPAjslnGvdo0S4IVF3t'
+    MERCADO_PAGO_QR_CODE_API: 'https://api.mercadopago.com/instore/orders/qr/seller/collectors'
+    MERCADO_PAGO_WEBHOOK: 'https://10ee-177-156-20-11.ngrok-free.app'

@@ -46,13 +46,13 @@ Para iniciar o projeto, você precisará ter o Docker e o Docker Compose instala
     docker-compose up --build
 ```
 
-3. Acesse a aplicação em http://localhost:3000
+3. Acesse a aplicação em http://localhost:3002
 
 4. Configure o ngrok para ser o webhook:
 
 ```bash
 npm install -g ngrok
-ngrok http 3000
+ngrok http 3002
 ```
 
 Esse comando indica a nossa porta da aplicação para redirecionar. Copie o link gerado e cole na env `MERCADO_PAGO_WEBHOOK`.
@@ -61,7 +61,7 @@ Obs: Caso seja a primeira vez, faça login conforme sugerido no terminal.
 
 ## Documentação da API
 
-A documentação das APIs está disponível via Swagger. Após iniciar o projeto, você pode acessá-la em http://localhost:3000/api-docs.
+A documentação das APIs está disponível via Swagger. Após iniciar o projeto, você pode acessá-la em http://localhost:3002/api-docs.
 
 ## Comandos Kubernetes
 
@@ -142,7 +142,7 @@ Após o cliente criado, podemos utilizar o id do cliente na criação pedido, pe
 
 ```bash
 POST
-curl --location 'http://localhost:3000/order' \
+curl --location 'http://localhost:3001/order' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "idClient": "678b039fafba99ba4720f853",
@@ -198,7 +198,7 @@ curl --location 'http://localhost:3000/payment/' \
 Consulte o pagamento criado para gerar o QRcode de pagamento, informando o id de pagamento gerado.
 
 ```bash
-curl --location 'http://localhost:3000/payment/:idPayment' \
+curl --location 'http://localhost:3002/payment/:idPayment' \
 --data ''
 ```
 
@@ -216,7 +216,7 @@ Após realizado pagamento com sucesso no aplicativo do Mercado Pago, consulte o 
 
 ```bash
 GET
-curl --location 'http://localhost:3000/payment/:idPayment' \
+curl --location 'http://localhost:3002/payment/:idPayment' \
 --data ''
 ```
 

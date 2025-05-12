@@ -1,36 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: fast-food-payment-service
-    labels:
-        app: fast-food-payment-service
+    name: fast-food-payment-deployment
 spec:
     replicas: 2
     selector:
         matchLabels:
-            app: fast-food-payment-service
+            app: fast-food-payment
     template:
         metadata:
             labels:
-                app: fast-food-payment-service
+                app: fast-food-payment
         spec:
-            automountServiceAccountToken: false
             containers:
-                - name: fast-food-payment-service
-                  image: maickway/fast-food-api:tagname # TO-DO ATUALIZAR A IMG
+                - name: fast-food-payment
+                  image: leandradz/payment-service:1.0.6
                   ports:
-                      - containerPort: 3000
-                  resources:
-                      requests:
-                          memory: '128Mi'
-                          cpu: '250m'
-                          ephemeral-storage: '1Gi'
-                      limits:
-                          memory: '256Mi'
-                          cpu: '500m'
+                      - containerPort: 3002
                   env:
                       - name: MONGODB_URI
-                        value: mongodb://mongo:27017/fast-food-payment
+                        value: mongodb://mongo:27017/mong
                       - name: APP_ENV
                         valueFrom:
                             configMapKeyRef:
@@ -41,15 +30,37 @@ spec:
                             configMapKeyRef:
                                 name: fast-food-payment-config
                                 key: LOG_LEVEL
+                      - name: ORDER_SERVICE_API
+                        valueFrom:
+                            configMapKeyRef:
+                                name: fast-food-payment-config
+                                key: ORDER_SERVICE_API
+                      - name: MERCADO_PAGO_API
+                        valueFrom:
+                            configMapKeyRef:
+                                name: fast-food-payment-config
+                                key: MERCADO_PAGO_API
+                      - name: MERCADO_PAGO_CLIENT_ID
+                        valueFrom:
+                            configMapKeyRef:
+                                name: fast-food-payment-config
+                                key: MERCADO_PAGO_CLIENT_ID
+                      - name: MERCADO_PAGO_CLIENT_SECRET
+                        valueFrom:
+                            configMapKeyRef:
+                                name: fast-food-payment-config
+                                key: MERCADO_PAGO_CLIENT_SECRET
+                      - name: MERCADO_PAGO_QR_CODE_API
+                        valueFrom:
+                            configMapKeyRef:
+                                name: fast-food-payment-config
+                                key: MERCADO_PAGO_QR_CODE_API
+                      - name: MERCADO_PAGO_WEBHOOK
+                        valueFrom:
+                            configMapKeyRef:
+                                name: fast-food-payment-config
+                                key: MERCADO_PAGO_WEBHOOK
                 - name: mongo
-                  image: mongo:6.0.5
+                  image: mongo:latest
                   ports:
                       - containerPort: 27017
-                  resources:
-                      requests:
-                          memory: '128Mi'
-                          cpu: '250m'
-                          ephemeral-storage: '1Gi'
-                      limits:
-                          memory: '256Mi'
-                          cpu: '500m'
