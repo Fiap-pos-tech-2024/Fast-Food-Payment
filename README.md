@@ -92,6 +92,71 @@ kubectl delete -f k8s/configmap.yaml
 kubectl delete -f k8s/secret.yaml
 ```
 
+## Execução no Kubernetes (Payment + Order Service)
+
+### Pré-requisitos
+- [kubectl](https://kubernetes.io/docs/tasks/tools/) instalado e configurado
+- [minikube](https://minikube.sigs.k8s.io/docs/start/) ou outro cluster Kubernetes local/cloud
+
+### 1. Inicie o cluster Kubernetes (exemplo com minikube):
+```bash
+minikube start
+minikube dashboard
+```
+
+### 2. Aplique os manifests do banco de dados (MongoDB e/ou MySQL):
+```bash
+# No diretório do order-service (Fast-Food-Order)
+kubectl apply -f k8s/mysql-deployment.yaml
+# No diretório do payment (Fast-Food-Payment)
+kubectl apply -f k8s/mongo-deployment.yaml
+```
+
+### 3. Aplique os ConfigMaps e Secrets de ambos os serviços:
+```bash
+# Order Service
+kubectl apply -f k8s/configmap.yaml
+kubectl apply -f k8s/secret.yaml
+# Payment Service
+kubectl apply -f k8s/configmap.yaml
+kubectl apply -f k8s/secret.yaml
+```
+
+### 4. Aplique os Deployments, Services e HPA:
+```bash
+# Order Service
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
+kubectl apply -f k8s/hpa.yaml
+# Payment Service
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
+kubectl apply -f k8s/hpa.yaml
+```
+
+### 5. Descubra as portas NodePort para acessar os serviços:
+```bash
+kubectl get svc
+```
+- O order-service normalmente estará em uma porta como 32001
+- O payment-service normalmente estará em uma porta como 32002
+
+Acesse via browser ou API:
+- Order Service: http://localhost:<porta-order-service>
+- Payment Service: http://localhost:<porta-payment-service>
+
+### 6. (Opcional) Use o port-forward para expor localmente:
+```bash
+kubectl port-forward svc/payment-service 3002:3002
+kubectl port-forward svc/order-service 3001:3001
+```
+
+### Observações
+- Certifique-se de que as variáveis de ambiente e dependências (como URLs entre os serviços) estejam corretas nos ConfigMaps.
+- O Payment depende do Order Service estar rodando e acessível.
+- O Swagger do Payment estará disponível em: http://localhost:3002/api-docs
+- O Swagger do Order Service estará disponível em: http://localhost:3001/api-docs (se implementado)
+
 ## Arquitetura
 
 ![Desenho da arquitetura Fase 2 - FIAP](./assets/FIAP_Fase2.png)
