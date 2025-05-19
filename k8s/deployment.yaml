@@ -14,7 +14,7 @@ spec:
         spec:
             containers:
                 - name: fast-food-payment
-                  image: leandradz/payment-service:1.0.7
+                  image: leandradz/payment-service:1.0.12
                   ports:
                       - containerPort: 3002
                   env:

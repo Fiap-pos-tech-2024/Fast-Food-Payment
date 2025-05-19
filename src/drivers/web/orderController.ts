@@ -1,7 +1,7 @@
 import { Order } from '../../domain/entities/order'
 import { OrderService } from '../../domain/interface/orderService'
 
-const BASE_URL = process.env.ORDER_SERVICE_API
+const BASE_URL = process.env.ORDER_SERVICE_API ?? 'http://order-service:3001'
 
 if (!BASE_URL) {
     throw new Error('ORDER_SERVICE_API is not defined in environment variables')
