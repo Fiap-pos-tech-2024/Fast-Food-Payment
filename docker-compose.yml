@@ -1,12 +1,13 @@
 services:
-    api:
+    payment-service:
         build:
             context: .
             dockerfile: Dockerfile
         ports:
-            - '3000:3000'
+            - '3002:3002'
         environment:
             MONGODB_URI: ${MONGODB_URI}
+            ORDER_SERVICE_API: http://order-service:3001
             MERCADO_PAGO_API: ${MERCADO_PAGO_API}
             MERCADO_PAGO_CLIENT_SECRET: ${MERCADO_PAGO_CLIENT_SECRET}
             MERCADO_PAGO_CLIENT_ID: ${MERCADO_PAGO_CLIENT_ID}
@@ -16,6 +17,8 @@ services:
             - mongo
         volumes:
             - ./src:/app/src
+        networks:
+            - fast-food-network
 
     mongo:
         image: mongo:latest
@@ -23,7 +26,12 @@ services:
             - '--logpath'
             - '/var/log/mongodb/mongod.log'
         volumes:
-            - mongo_data:/data/db # Persistir os dados do MongoDB
+            - mongo_data:/data/db
+        networks:
+            - fast-food-network
 
 volumes:
     mongo_data:
+
+networks:
+    fast-food-network:

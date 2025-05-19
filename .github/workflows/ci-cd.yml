@@ -1,4 +1,4 @@
-name: Fast-Food Payment CI/CD
+name: Fast-Food-Payment CI/CD
 
 on:
     push:

@@ -46,21 +46,24 @@ export class MercadoPagoController {
             title: 'Product order',
             description: 'FastFood sale',
             notification_url: NOTIFICATION_URL,
-            total_amount: order.value,
+            total_amount: parseFloat(order.value.toString()),
             items: order.items.map((item: Product) => {
+                const unitPrice = parseFloat(item.unitValue.toString())
+                const totalItemAmount = parseFloat(
+                    (item.amount * unitPrice).toFixed(2)
+                )
                 return {
                     sku_number: item.idProduct,
                     category: 'marketplace',
                     title: item.name,
                     description: item.observation,
-                    unit_price: item.unitValue,
+                    unit_price: unitPrice,
                     unit_measure: 'unit',
-                    total_amount: item.amount * item.unitValue,
+                    total_amount: totalItemAmount,
                     quantity: item.amount,
                 }
             }),
         }
-
         try {
             const response = await fetch(url, {
                 method: 'POST',
@@ -71,7 +74,10 @@ export class MercadoPagoController {
                 body: JSON.stringify(data),
             })
             const result = (await response.json()) as { qr_data: string }
-            return { qr_data: result.qr_data ?? '' }
+            if (!result.qr_data) {
+                throw new Error('Mercado Pago API did not return qr_data')
+            }
+            return { qr_data: result.qr_data }
         } catch (error) {
             console.error('Failed to generate QR Code Link:', error)
             throw new Error('Failed to generate QR code link')

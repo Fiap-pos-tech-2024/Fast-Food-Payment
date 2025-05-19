@@ -13,6 +13,7 @@ export class HealthCheckController {
 
     public setupRoutes(): Router {
         this.router.get('/', this.healthCheck.bind(this))
+        this.router.get('/order', this.orderHealthCheck.bind(this)) // Nova rota
         return this.router
     }
 
@@ -36,19 +37,74 @@ export class HealthCheckController {
      *                   example: "development"
      *                 node:
      *                   type: string
-     *                   example: "v14.17.0"
+     *                   example: "v18.20.8"
      *                 timestamp:
      *                   type: string
      *                   format: date-time
      *                   example: "Fri, 03 Nov 2024 10:00:00 GMT"
      *                 name:
      *                   type: string
-     *                   example: "Fast Food"
+     *                   example: "fast-food-payment"
      *       '500':
      *         description: Erro interno do servidor
      */
     private healthCheck(req: Request, res: Response): void {
-        const result = this.healthUseCase.healthCheck()
-        res.status(200).json(result)
+        try {
+            const result = this.healthUseCase.healthCheck()
+            res.status(200).json(result)
+        } catch (error) {
+            console.error('Health check failed:', error)
+            res.status(500).json({ error: 'Health check failed' })
+        }
+    }
+
+    /**
+     * @swagger
+     * /health/order:
+     *   get:
+     *     summary: Verifica a saúde do serviço Order
+     *     tags: [Health]
+     *     description: Faz uma requisição ao serviço Order e retorna o status de saúde dele.
+     *     responses:
+     *       200:
+     *         description: Serviço Order está saudável
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               example:
+     *                 status: OK
+     *       500:
+     *         description: Erro ao consultar a saúde do serviço Order
+     *         content:
+     *           application/json:
+     *             schema:
+     *               type: object
+     *               properties:
+     *                 error:
+     *                   type: string
+     *                   example: Failed to check order health
+     */
+    public async orderHealthCheck(req: Request, res: Response): Promise<void> {
+        try {
+            const response = await fetch(`http://order-service:3001/health`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+
+            if (!response.ok) {
+                throw new Error(
+                    `Order service health check failed with status ${response.status}`
+                )
+            }
+
+            const data = await response.json()
+            res.status(200).json(data)
+        } catch (error) {
+            console.log('Failed to check order health', error)
+            res.status(500).json({ error: 'Failed to check order health' })
+        }
     }
 }

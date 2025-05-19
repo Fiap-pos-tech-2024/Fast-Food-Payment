@@ -61,8 +61,9 @@ class InitProject {
     }
 
     startServer() {
-        this.express.listen(3000, () => {
-            console.log('Server is running on port 3000')
+        const PORT = 3002
+        this.express.listen(PORT, () => {
+            console.log(`Servidor rodando na porta ${PORT}`)
         })
     }
 }

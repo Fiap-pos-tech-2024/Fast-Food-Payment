@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb'
 import { MongoConnection } from '../../config/mongoConfig'
 import { PaymentRepository } from '../../domain/interface/paymentRepository'
 import { Payment } from '../../domain/entities/payment'
@@ -18,7 +17,7 @@ export class MongoPaymentRepository implements PaymentRepository {
     async createPayment(payment: Payment): Promise<{ id: string }> {
         const db = await this.getDb()
         const payments = await db.collection(this.collection).insertOne({
-            _id: new ObjectId(payment.paymentId ?? ''),
+            id: payment.paymentId ?? '',
             ...payment,
         })
         return { id: payments.insertedId.toString() }
@@ -28,11 +27,11 @@ export class MongoPaymentRepository implements PaymentRepository {
         const db = await this.getDb()
         const payment = await db
             .collection(this.collection)
-            .findOne({ _id: new ObjectId(paymentId) })
+            .findOne({ id: paymentId })
         if (payment) {
             return new Payment(
                 payment.order,
-                payment._id.toString(),
+                payment.id.toString(),
                 payment.paymentLink,
                 payment.status,
                 payment.total
@@ -47,7 +46,7 @@ export class MongoPaymentRepository implements PaymentRepository {
     ): Promise<void> {
         const db = await this.getDb()
         const dbCollection = db.collection(this.collection)
-        const query = { _id: new ObjectId(paymentId) }
+        const query = { id: paymentId }
         await dbCollection.updateOne(query, {
             $set: {
                 status,
